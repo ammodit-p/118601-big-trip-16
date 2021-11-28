@@ -4,6 +4,6 @@ export const pointsListView = (items) => (`
       <li class="trip-events__item">
         ${item}
       </li>
-    `))}
+    `)).join('')}
   </ul>
 `);

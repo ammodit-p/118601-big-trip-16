@@ -4,6 +4,7 @@
   "private": true,
   "description": "Проект «Большое путешествие» от HTML Academy",
   "scripts": {
+    "fix": "eslint --fix src/",
     "eslint": "eslint src/",
     "test": "npm run eslint",
     "dev": "webpack --watch --mode=development",
@@ -25,5 +26,8 @@
   },
   "engines": {
     "node": "16"
+  },
+  "dependencies": {
+    "dayjs": "1.10.7"
   }
 }
