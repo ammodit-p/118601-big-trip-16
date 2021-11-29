@@ -1,58 +1,12 @@
 import {filtersView} from './view/filters-view';
 import {menuView} from './view/menu-view';
 import {sortingView} from './view/sorting-view';
-import {editPointView} from './view/edit-point-view';
-import {addNewPointView} from './view/add-new-point-view';
+import {editablePointView} from './view/editable-point-view';
 import {pointsListView} from './view/point-list-view';
 import {pointView} from './view/point-view';
+import {generatePoint} from './mock/points';
+import {tripInfoTitleView} from './view/trip-info-title-view';
 
-const tripPoints = [{
-  id: 1,
-  title: 'Taxi Amsterdam',
-  // Будет тип, и по типу будем брать картинку
-  type: 'img/icons/taxi.png',
-  date: '2019-03-18',
-  start:'2019-03-18T10:30',
-  end: '2019-03-18T11:00',
-  offers: [{
-    title: 'Order Uber',
-    price: '20'
-  }],
-  totalPrice: '20',
-  isFavourite: false
-},
-{
-  id: 2,
-  title: 'Flight Chamonix',
-  type: 'img/icons/flight.png',
-  date: '2019-03-18',
-  start:'2019-03-18T12:25',
-  end: '2019-03-18T13:35',
-  offers: [{
-    title: 'Add luggage',
-    price: '50'
-  },{
-    title: 'Switch to comfort',
-    price: '80'
-  }],
-  totalPrice: '160',
-  isFavourite: true
-},
-{
-  id: 3,
-  title: 'Drive Chamonix',
-  type: 'img/icons/drive.png',
-  date: '2019-03-18',
-  start:'2019-03-18T14:30',
-  end: '2019-03-18T16:05',
-  offers: [{
-    title: 'Rent a car',
-    price: '200'
-  }],
-  // Подозреваю что это опечатка в верстке, общая цена меньше
-  totalPrice: '160',
-  isFavourite: false
-}, ];
 
 const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
@@ -61,10 +15,27 @@ const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
+const MAX_POINTS_COUNT = 10;
+
+const tripPoints = Array.from({length: MAX_POINTS_COUNT}, generatePoint).sort((a, b) => {
+  if (a.startDate > b.startDate) {
+    return 1;
+  }
+
+  if (a.startDate < b.startDate) {
+    return -1;
+  }
+
+  return 0;
+});
 
 const render =(container, markup, position) => {
   container.insertAdjacentHTML(position, markup);
 };
+
+const tripInfoContainer = document.querySelector('.trip-main');
+render(tripInfoContainer, tripInfoTitleView(tripPoints), RenderPosition.BEFOREEND);
+
 
 const navigationContainerElement = document.querySelector('.trip-controls__navigation');
 render(navigationContainerElement, menuView(), RenderPosition.BEFOREEND);
@@ -76,7 +47,5 @@ render(filtersContainerElement, filtersView(), RenderPosition.BEFOREEND);
 const eventsElementContainer = document.querySelector('.trip-events');
 render(eventsElementContainer, sortingView(), RenderPosition.BEFOREEND);
 
-const POINTS = [editPointView(), ...tripPoints.map((point)=>pointView(point)), addNewPointView()];
+const POINTS = [editablePointView(tripPoints[0]), ...tripPoints.map((point)=>pointView(point)).slice(1, tripPoints.length)];
 render(eventsElementContainer,pointsListView(POINTS),RenderPosition.BEFOREEND);
-
-
