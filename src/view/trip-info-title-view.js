@@ -50,6 +50,7 @@ const createTripInfoTitleView = (points) => {
   );
 };
 
+const createEmptyTripInfoTitleView = () => ('<section class="trip-main__trip-info  trip-info"></section>');
 export default class TripInfoTitleView {
   #element = null
   #points = null
@@ -67,7 +68,12 @@ export default class TripInfoTitleView {
   }
 
   get template() {
-    return createTripInfoTitleView(this.#points);
+    if (!this.#points.length) {
+      return createEmptyTripInfoTitleView();
+    } else {
+      return createTripInfoTitleView(this.#points);
+    }
+
   }
 
   removeElement() {

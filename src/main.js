@@ -6,6 +6,7 @@ import PointsListView from './view/point-list-view';
 import PointView from './view/point-view';
 import {generatePoint} from './mock/points';
 import TripInfoTitleView from './view/trip-info-title-view';
+import EmptyListView from './view/empty-list-view';
 
 import {RenderPosition, render} from './render';
 
@@ -50,6 +51,11 @@ const renderPoints = (pointListElement, point) => {
     document.addEventListener('keydown', onEscKeyDown);
   });
 
+  pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceFormToPoint();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
   pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
     evt.preventDefault();
     replaceFormToPoint();
@@ -63,13 +69,17 @@ const renderPointsList = (container, points) => {
   const pointsList = new PointsListView();
   const sortingElement = new SortingView();
 
-  render(container, pointsList.element, RenderPosition.AFTERBEGIN);
+  if (!points.length) {
+    render(container, new EmptyListView().element, RenderPosition.AFTERBEGIN);
+  } else {
 
-  // тут рендер заглушки будет
+    render(container, pointsList.element, RenderPosition.AFTERBEGIN);
 
-  render(container, sortingElement.element, RenderPosition.AFTERBEGIN);
+    render(container, sortingElement.element, RenderPosition.AFTERBEGIN);
 
-  points.forEach((point) => renderPoints(pointsList.element, point));
+    points.forEach((point) => renderPoints(pointsList.element, point));
+  }
+
 
 };
 
