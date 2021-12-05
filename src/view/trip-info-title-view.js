@@ -1,6 +1,7 @@
+import {createElement} from '../render.js';
 import {getSelectedOffers} from '../utils';
 
-export const tripInfoTitleView = (points) => {
+const createTripInfoTitleView = (points) => {
 
   const startDate = points[0].startDate;
   const endDate = points[points.length - 1].endDate;
@@ -35,8 +36,8 @@ export const tripInfoTitleView = (points) => {
 
   const totalPrice = () => points.reduce((sum, point) => (sum + Number(point.price) + selectedOffers.reduce((s, offer) => (s + Number(offer.price)), 0)), 0);
 
-  return (`
-    <section class="trip-main__trip-info  trip-info">
+  return (
+    `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
           <h1 class="trip-info__title">${generateCities()}</h1>
           <p class="trip-info__dates">${startDate.format('MMM D')}&nbsp;&mdash;&nbsp;${endDate.format('MMM D')}</p>
@@ -45,8 +46,32 @@ export const tripInfoTitleView = (points) => {
       <p class="trip-info__cost">
         Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice()}</span>
       </p>
-    </section>
-  `);
+    </section>`
+  );
 };
 
+export default class TripInfoTitleView {
+  #element = null
+  #points = null
+
+  constructor(points) {
+    this.#points = points;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripInfoTitleView(this.#points);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
 

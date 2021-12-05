@@ -1,21 +1,16 @@
-import {filtersView} from './view/filters-view';
-import {menuView} from './view/menu-view';
-import {sortingView} from './view/sorting-view';
-import {editablePointView} from './view/editable-point-view';
-import {pointsListView} from './view/point-list-view';
-import {pointView} from './view/point-view';
+import FiltersView from './view/filters-view';
+import MenuView from './view/menu-view';
+import SortingView from './view/sorting-view';
+import EditablePointView from './view/editable-point-view';
+import PointsListView from './view/point-list-view';
+import PointView from './view/point-view';
 import {generatePoint} from './mock/points';
-import {tripInfoTitleView} from './view/trip-info-title-view';
+import TripInfoTitleView from './view/trip-info-title-view';
+
+import {RenderPosition, render} from './render';
 
 
-const RenderPosition = {
-  BEFOREBEGIN: 'beforebegin',
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-  AFTEREND: 'afterend',
-};
-
-const MAX_POINTS_COUNT = 10;
+const MAX_POINTS_COUNT = 22;
 
 const tripPoints = Array.from({length: MAX_POINTS_COUNT}, generatePoint).sort((a, b) => {
   if (a.startDate > b.startDate) {
@@ -29,23 +24,72 @@ const tripPoints = Array.from({length: MAX_POINTS_COUNT}, generatePoint).sort((a
   return 0;
 });
 
-const render =(container, markup, position) => {
-  container.insertAdjacentHTML(position, markup);
+
+const renderPoints = (pointListElement, point) => {
+  const pointComponent = new PointView(point);
+  const pointEditComponent = new EditablePointView(point);
+
+  const replacePointToForm = () => {
+    pointListElement.replaceChild(pointEditComponent.element, pointComponent.element);
+  };
+
+  const replaceFormToPoint = () => {
+    pointListElement.replaceChild(pointComponent.element, pointEditComponent.element);
+  };
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
+  pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replacePointToForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToPoint();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  render(pointListElement, pointComponent.element, RenderPosition.BEFOREEND);
 };
 
+const renderPointsList = (container, points) => {
+  const pointsList = new PointsListView();
+  const sortingElement = new SortingView();
+
+  render(container, pointsList.element, RenderPosition.AFTERBEGIN);
+
+  // тут рендер заглушки будет
+
+  render(container, sortingElement.element, RenderPosition.AFTERBEGIN);
+
+  points.forEach((point) => renderPoints(pointsList.element, point));
+
+};
+
+
 const tripInfoContainer = document.querySelector('.trip-main');
-render(tripInfoContainer, tripInfoTitleView(tripPoints), RenderPosition.BEFOREEND);
+render(tripInfoContainer, new TripInfoTitleView(tripPoints).element, RenderPosition.BEFOREEND);
 
 
 const navigationContainerElement = document.querySelector('.trip-controls__navigation');
-render(navigationContainerElement, menuView(), RenderPosition.BEFOREEND);
+render(navigationContainerElement, new MenuView().element, RenderPosition.BEFOREEND);
 
 const filtersContainerElement = document.querySelector('.trip-controls__filters');
-render(filtersContainerElement, filtersView(), RenderPosition.BEFOREEND);
+render(filtersContainerElement, new FiltersView().element, RenderPosition.BEFOREEND);
 
 
 const eventsElementContainer = document.querySelector('.trip-events');
-render(eventsElementContainer, sortingView(), RenderPosition.BEFOREEND);
 
-const POINTS = [editablePointView(tripPoints[0]), ...tripPoints.map((point)=>pointView(point)).slice(1, tripPoints.length)];
-render(eventsElementContainer,pointsListView(POINTS),RenderPosition.BEFOREEND);
+const pointsListContainer = new PointsListView().element;
+
+render(eventsElementContainer, pointsListContainer, RenderPosition.BEFOREEND);
+
+renderPointsList(pointsListContainer, tripPoints);
+

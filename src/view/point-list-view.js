@@ -1,9 +1,23 @@
-export const pointsListView = (items) => (`
-  <ul class="trip-events__list">
-    ${items.map((item) => (`
-      <li class="trip-events__item">
-        ${item}
-      </li>
-    `)).join('')}
-  </ul>
-`);
+import {createElement} from '../render.js';
+
+const createPointsListTemplate = () => ('<ul class="trip-events__list"></ul>');
+
+export default class PointsListView {
+  #element = null
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createPointsListTemplate();
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
