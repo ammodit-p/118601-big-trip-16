@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {PointTypeEnum, PointTitleMap} from '../conts';
 import {getSelectedOffers} from '../utils';
 import duration from 'dayjs/plugin/duration';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view';
 
 dayjs.extend(duration);
 
@@ -89,27 +89,25 @@ const createPointTemplate = ({ type, town, startDate, endDate, offers, isFavouri
   </li>`
   );};
 
-export default class PointView {
-  #element = null
+export default class PointView extends AbstractView {
   #point = null
 
   constructor(point) {
+    super();
     this.#point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createPointTemplate(this.#point);
   }
 
-  removeElement() {
-    this.#element = null;
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 }

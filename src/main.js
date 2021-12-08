@@ -8,7 +8,7 @@ import {generatePoint} from './mock/points';
 import TripInfoTitleView from './view/trip-info-title-view';
 import EmptyListView from './view/empty-list-view';
 
-import {RenderPosition, render} from './render';
+import {RenderPosition, render, replaceElements} from './render';
 
 
 const MAX_POINTS_COUNT = 22;
@@ -31,11 +31,11 @@ const renderPoints = (pointListElement, point) => {
   const pointEditComponent = new EditablePointView(point);
 
   const replacePointToForm = () => {
-    pointListElement.replaceChild(pointEditComponent.element, pointComponent.element);
+    replaceElements(pointEditComponent, pointComponent);
   };
 
   const replaceFormToPoint = () => {
-    pointListElement.replaceChild(pointComponent.element, pointEditComponent.element);
+    replaceElements(pointComponent, pointEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -46,23 +46,22 @@ const renderPoints = (pointListElement, point) => {
     }
   };
 
-  pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  pointComponent.setEditClickHandler(() => {
     replacePointToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  pointEditComponent.setFormCloseHandler(() => {
     replaceFormToPoint();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  pointEditComponent.setFormSubmitHandler(() => {
     replaceFormToPoint();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(pointListElement, pointComponent.element, RenderPosition.BEFOREEND);
+  render(pointListElement, pointComponent, RenderPosition.BEFOREEND);
 };
 
 const renderPointsList = (container, points) => {
@@ -70,14 +69,14 @@ const renderPointsList = (container, points) => {
   const sortingElement = new SortingView();
 
   if (!points.length) {
-    render(container, new EmptyListView().element, RenderPosition.AFTERBEGIN);
+    render(container, new EmptyListView(), RenderPosition.AFTERBEGIN);
   } else {
 
-    render(container, pointsList.element, RenderPosition.AFTERBEGIN);
+    render(container, pointsList, RenderPosition.AFTERBEGIN);
 
-    render(container, sortingElement.element, RenderPosition.AFTERBEGIN);
+    render(container, sortingElement, RenderPosition.AFTERBEGIN);
 
-    points.forEach((point) => renderPoints(pointsList.element, point));
+    points.forEach((point) => renderPoints(pointsList, point));
   }
 
 
@@ -85,19 +84,19 @@ const renderPointsList = (container, points) => {
 
 
 const tripInfoContainer = document.querySelector('.trip-main');
-render(tripInfoContainer, new TripInfoTitleView(tripPoints).element, RenderPosition.BEFOREEND);
+render(tripInfoContainer, new TripInfoTitleView(tripPoints), RenderPosition.BEFOREEND);
 
 
 const navigationContainerElement = document.querySelector('.trip-controls__navigation');
-render(navigationContainerElement, new MenuView().element, RenderPosition.BEFOREEND);
+render(navigationContainerElement, new MenuView(), RenderPosition.BEFOREEND);
 
 const filtersContainerElement = document.querySelector('.trip-controls__filters');
-render(filtersContainerElement, new FiltersView().element, RenderPosition.BEFOREEND);
+render(filtersContainerElement, new FiltersView(), RenderPosition.BEFOREEND);
 
 
 const eventsElementContainer = document.querySelector('.trip-events');
 
-const pointsListContainer = new PointsListView().element;
+const pointsListContainer = new PointsListView();
 
 render(eventsElementContainer, pointsListContainer, RenderPosition.BEFOREEND);
 

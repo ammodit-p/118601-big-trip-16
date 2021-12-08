@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view';
 import {getSelectedOffers} from '../utils';
 
 const createTripInfoTitleView = (points) => {
@@ -51,20 +51,12 @@ const createTripInfoTitleView = (points) => {
 };
 
 const createEmptyTripInfoTitleView = () => ('<section class="trip-main__trip-info  trip-info"></section>');
-export default class TripInfoTitleView {
-  #element = null
+export default class TripInfoTitleView extends AbstractView {
   #points = null
 
   constructor(points) {
+    super();
     this.#points = points;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
@@ -73,11 +65,6 @@ export default class TripInfoTitleView {
     } else {
       return createTripInfoTitleView(this.#points);
     }
-
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 
