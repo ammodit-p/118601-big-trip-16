@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils';
 import {pointTypes, TOWNS} from '../conts';
 import {OFFERS} from './offers';
+import {nanoid} from 'nanoid';
 
 
 export const generateDates = () => {
@@ -38,7 +39,7 @@ export const generatePoint = () => {
   const newoffers = [...offers.slice(0, getRandomInteger(0, offers.length - 1)).map((offer) => offer.id)];
 
   const points = {
-    id: getRandomInteger(1, 100),
+    id: nanoid(),
     type,
     town: TOWNS[getRandomInteger(0, TOWNS.length -1)],
     info,
@@ -46,7 +47,7 @@ export const generatePoint = () => {
     startDate,
     endDate,
     offers: newoffers,
-    isFavourite: getRandomInteger(),
+    isFavourite: Boolean(getRandomInteger()),
     price: `${getRandomInteger(20, 1000)}`
   };
 

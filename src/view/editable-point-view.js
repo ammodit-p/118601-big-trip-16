@@ -130,8 +130,20 @@ export default class EditablePointView extends AbstractView {
 
     #formSubmitHandler = (evt) => {
       evt.preventDefault();
-      this._callback.formSubmit();
+      this._callback.formSubmit(this.#point);
     }
+
+    #deleteResethandler = (evt) => {
+      evt.preventDefault();
+
+      if (this.#point && this.#point.id) {
+        this._callback.deleteClick();
+        return;
+      }
+
+      this._callback.cancelClick();
+    }
+
 
     setFormCloseHandler = (callback) => {
       this._callback.formClose = callback;
@@ -143,5 +155,16 @@ export default class EditablePointView extends AbstractView {
     setFormSubmitHandler = (callback) => {
       this._callback.formSubmit = callback;
       this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    }
+
+    setPointDeleteHandler = (callback) => {
+      this._callback.deleteClick = callback;
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteResethandler);
+    }
+
+    setPointCancelHandler = (callback) => {
+      this._callback.cancelClick = callback;
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteResethandler);
+
     }
 }

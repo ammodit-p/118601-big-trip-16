@@ -1,11 +1,7 @@
-import dayjs from 'dayjs';
 import {PointTypeEnum, PointTitleMap} from '../conts';
 import {getSelectedOffers} from '../utils';
-import duration from 'dayjs/plugin/duration';
 import AbstractView from './abstract-view';
-
-dayjs.extend(duration);
-
+import {getDiffTime} from '../utils';
 
 const imgTypeMap = {
   [PointTypeEnum.CHECK_IN]: 'img/icons/check-in.png',
@@ -19,33 +15,9 @@ const imgTypeMap = {
   [PointTypeEnum.TRAIN]: 'img/icons/train.png',
 };
 
-const createPointTemplate = ({ type, town, startDate, endDate, offers, isFavourite, price}) => {
-
+const createPointTemplate = (point) => {
+  const { type, town, startDate, endDate, offers, isFavourite, price} = point;
   const selectedOffers = getSelectedOffers(offers, type);
-
-  const totalPrice = () => price + selectedOffers.reduce((sum, offer)=> sum + Number(offer.price), 0);
-
-  const getDiffTime = () => {
-
-    const diff = dayjs.duration(endDate - startDate);
-
-    const hours = diff.format('HH');
-
-    if (hours === 0) {
-
-      return `${diff.format('mm')  }M`;
-    }
-
-    if (hours > 24) {
-      return `${diff.format('DD')}D ${hours}H ${diff.format('mm')}M`;
-    }
-
-    if (hours < 24) {
-      return `${hours}H ${diff.format('mm')}M`;
-    }
-
-  };
-
 
   return (
     `<li class="trip-events__item">
@@ -61,10 +33,10 @@ const createPointTemplate = ({ type, town, startDate, endDate, offers, isFavouri
           &mdash;
           <time class="event__end-time" datetime="${endDate.format('YYYY-MM-DDTHH:MM')}">${endDate.format('HH:mm')}</time>
         </p>
-        <p class="event__duration">${getDiffTime()}</p>
+        <p class="event__duration">${getDiffTime(point)}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${totalPrice()}</span>
+        &euro;&nbsp;<span class="event__price-value">${price}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
@@ -106,8 +78,18 @@ export default class PointView extends AbstractView {
     this._callback.editClick();
   }
 
+  #favouriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favouriteClick();
+  }
+
   setEditClickHandler = (callback) => {
     this._callback.editClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  setFavouriteClickHandler = (callback) => {
+    this._callback.favouriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favouriteClickHandler);
   }
 }
