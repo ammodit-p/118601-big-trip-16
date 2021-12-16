@@ -1,4 +1,4 @@
-import {isPointFuture} from '../utils';
+import {isPointFuture} from '../utils/dayjs';
 
 export const pointToFilterMap = {
   everything: (points) =>points,

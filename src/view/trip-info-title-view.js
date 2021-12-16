@@ -1,5 +1,5 @@
 import AbstractView from './abstract-view';
-import {getSelectedOffers} from '../utils';
+import {getSelectedOffers} from '../utils/points';
 
 const createTripInfoTitleView = (points) => {
 

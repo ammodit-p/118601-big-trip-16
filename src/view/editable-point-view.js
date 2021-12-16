@@ -1,6 +1,6 @@
 import  { PointTitleMap, pointTypes, TOWNS} from '../conts';
 import {OFFERS} from '../mock/offers';
-import {getSelectedOffers} from '../utils';
+import {getSelectedOffers} from '../utils/points';
 import AbstractView from './abstract-view';
 
 

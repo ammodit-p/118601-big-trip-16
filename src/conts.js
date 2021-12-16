@@ -26,3 +26,9 @@ export const PointTitleMap = {
   [PointTypeEnum.CHECK_IN]: 'Check-in',
   [PointTypeEnum.BUS]: 'Bus'
 };
+
+export const SortType = {
+  DEFAULT: 'default',
+  PRICE: 'price',
+  TIME: 'time',
+};
