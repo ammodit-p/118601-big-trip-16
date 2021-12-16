@@ -1,6 +1,8 @@
 import {PointTypeEnum} from '../conts';
 import {getRandomInteger} from '../utils';
 import {pointTypes} from '../conts';
+import {nanoid} from 'nanoid';
+
 
 const offerTitles = {
   [PointTypeEnum.BUS]: [],
@@ -15,7 +17,7 @@ const offerTitles = {
 };
 
 const generateOffers = (type) => offerTitles[type].map((title) => ({
-  id: getRandomInteger(1, 10),
+  id: nanoid(),
   title,
   price: `${getRandomInteger(10, 100)}`
 }));
