@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import {getRandomInteger} from '../utils';
+import {nanoid} from 'nanoid';
+import {getRandomInteger} from '../utils/common';
 import {pointTypes, TOWNS} from '../conts';
 import {OFFERS} from './offers';
-import {nanoid} from 'nanoid';
 
 
 export const generateDates = () => {

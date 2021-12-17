@@ -1,7 +1,7 @@
-import {PointTypeEnum} from '../conts';
-import {getRandomInteger} from '../utils';
-import {pointTypes} from '../conts';
 import {nanoid} from 'nanoid';
+import {getRandomInteger} from '../utils/common';
+import {PointTypeEnum} from '../conts';
+import {pointTypes} from '../conts';
 
 
 const offerTitles = {

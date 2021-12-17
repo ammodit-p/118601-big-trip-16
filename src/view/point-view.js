@@ -1,7 +1,7 @@
 import {PointTypeEnum, PointTitleMap} from '../conts';
-import {getSelectedOffers} from '../utils';
+import {getSelectedOffers} from '../utils/points';
 import AbstractView from './abstract-view';
-import {getDiffTime} from '../utils';
+import {getDiffTime} from '../utils/dayjs';
 
 const imgTypeMap = {
   [PointTypeEnum.CHECK_IN]: 'img/icons/check-in.png',
