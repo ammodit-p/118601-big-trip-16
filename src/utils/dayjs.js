@@ -8,23 +8,26 @@ export const isPointFuture = (date) => dayjs().isBefore(date, 'D');
 
 export const getDuration = (point) => dayjs.duration(point.endDate.diff(point.startDate));
 
+const MILLISECONDS_IN_HOUR = 3600000;
+
 export const getDiffTime = (point) => {
 
   const diff = getDuration(point);
+  const diffInHours = diff.asMilliseconds()/MILLISECONDS_IN_HOUR;
 
   const hours = diff.format('HH');
+  const minutes = diff.format('mm');
+  const days = diff.format('DD');
 
-  if (hours === 0) {
-
-    return `${diff.format('mm')  }M`;
+  if (diffInHours < 1) {
+    return `${minutes}M`;
   }
 
-  if (hours > 24) {
-    return `${diff.format('DD')}D ${hours}H ${diff.format('mm')}M`;
+  if (diffInHours < 24) {
+    return `${hours}H ${minutes}M`;
   }
 
-  if (hours < 24) {
-    return `${hours}H ${diff.format('mm')}M`;
+  if (diffInHours >= 24) {
+    return `${days}D ${hours}H ${minutes}M`;
   }
-
 };

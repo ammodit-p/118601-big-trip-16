@@ -169,7 +169,7 @@ export default class EditablePointView extends SmartView {
         {
           enableTime: true,
           dateFormat: 'd/m/Y H:i',
-          defaultDate: Date.now(),
+          defaultDate: this._data.startDate.toDate() || Date.now(),
           onChange: this.#startDateChangeHandler,
         },
       );
@@ -179,7 +179,7 @@ export default class EditablePointView extends SmartView {
         {
           enableTime: true,
           dateFormat: 'd/m/Y H:i',
-          defaultDate: Date.now(),
+          defaultDate:  this._data.endDate.toDate() ||Date.now(),
           onChange: this.#endDateChangeHandler,
         },
 
@@ -191,14 +191,16 @@ export default class EditablePointView extends SmartView {
 
     }
 
-    #startDateChangeHandler = ([date]) => {
+    #startDateChangeHandler = ([date], _, instance) => {
       const startDate = dayjs(date);
       this.updateData({startDate});
+      instance.close();
     }
 
-    #endDateChangeHandler = ([date]) => {
+    #endDateChangeHandler = ([date], _, instance) => {
       const endDate = dayjs(date);
       this.updateData({endDate});
+      instance.close();
     }
 
     #pointTypeChangeHandler = (evt) => {
