@@ -4,10 +4,13 @@ import {OFFERS} from '../mock/offers';
 import {getSelectedOffers} from '../utils/points';
 import SmartView from './smart-view';
 import flatpickr from 'flatpickr';
+import { getTownImages} from '../utils/common';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const getAvailableOffers = (type) => OFFERS.find((i) => i.type === type).offers;
+
+const checkIsDisabled = (town) => !TOWNS.some((item) => item === town);
 
 const createEditablePointTemplate = ({
   availableOffers=[],
@@ -16,9 +19,10 @@ const createEditablePointTemplate = ({
   type = '',
   town = '',
   info = '',
-  img = '',
-  startDate = '',
-  endDate  = '',
+  img = [],
+  isDisabled,
+  startDate = dayjs(Date.now),
+  endDate  = dayjs(Date.now),
   price = ''}) => (
   `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -70,10 +74,10 @@ const createEditablePointTemplate = ({
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${price}">
+          <input class="event__input  event__input--price" id="event-price-${id}" type="number" name="event-price" value="${price}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>Save</button>
         <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
         ${id ? `
           <button class="event__rollup-btn" type="button">
@@ -119,12 +123,10 @@ const createEditablePointTemplate = ({
 
 export default class EditablePointView extends SmartView {
     #datepicker = []
-    #point = null
 
     constructor(point) {
       super();
       this._data = EditablePointView.parsePointToData(point);
-      this.#point = point;
 
       this.#setInnerHandlers();
       this.#setDatepicker();
@@ -135,9 +137,12 @@ export default class EditablePointView extends SmartView {
     }
 
     static parsePointToData = (point) => {
+      if (!point) {return {};}
       const availableOffers = getAvailableOffers(point.type);
       const selectedOffers = getSelectedOffers(point.offers, point.type);
-      return {...point, availableOffers, selectedOffers};
+      const img = getTownImages(point.town);
+      const isDisabled = checkIsDisabled(point.town);
+      return {...point, availableOffers, selectedOffers, img, isDisabled};
     }
 
     static parseDataToPoint = (data) => {
@@ -145,6 +150,7 @@ export default class EditablePointView extends SmartView {
       point.offers = [...data.selectedOffers.map((offer) => offer.id)];
       delete point.availableOffers;
       delete point.selectedOffers;
+      delete point.isDisabled;
 
       return point;
     }
@@ -215,9 +221,13 @@ export default class EditablePointView extends SmartView {
 
     #townChangeHandler = (evt) => {
       if (evt.target.tagName !== 'INPUT') {return;}
-
+      evt.preventDefault();
       const town = evt.target.value;
-      this.updateData({town});
+
+      if (town === this._data.town) {return;}
+      const isDisabled = checkIsDisabled(town);
+      const img = getTownImages(town);
+      this.updateDataWithElement({town, img, isDisabled});
 
     }
 
@@ -259,7 +269,7 @@ export default class EditablePointView extends SmartView {
     #deleteResethandler = (evt) => {
       evt.preventDefault();
 
-      if (this.#point && this.#point.id) {
+      if (this._data && this._data.id) {
         this._callback.deleteClick();
         return;
       }

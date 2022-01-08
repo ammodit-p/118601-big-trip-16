@@ -1,6 +1,7 @@
 import AbstractView from './abstract-view';
 import {getSelectedOffers} from '../utils/points';
 
+
 const createTripInfoTitleView = (points) => {
 
   const startDate = points[0].startDate;
@@ -10,9 +11,10 @@ const createTripInfoTitleView = (points) => {
 
   const generateCities = () => {
 
-    const town = new Set(points.map((i) => i.town).town);
-
-    switch(town.size) {
+    switch(points.length) {
+      case 0: {
+        return '';
+      }
       case 1: {
         return (`${firstCity}`);
       }
@@ -51,7 +53,7 @@ const createTripInfoTitleView = (points) => {
 };
 
 const createEmptyTripInfoTitleView = () => ('<section class="trip-main__trip-info  trip-info"></section>');
-export default class TripInfoTitleView extends AbstractView {
+export default class TripInfoView extends AbstractView {
   #points = null
 
   constructor(points) {

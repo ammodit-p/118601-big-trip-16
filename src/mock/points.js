@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import {getRandomInteger} from '../utils/common';
+import {getRandomInteger, generateImages} from '../utils/common';
 import {pointTypes, TOWNS} from '../conts';
 import {OFFERS} from './offers';
 
@@ -15,17 +15,10 @@ export const generateDates = () => {
 
   const dayGenerated = dayjs().add(daysGap, 'day');
 
-  const startDate = dayGenerated;//.toDate()
-  const endDate = dayGenerated.add(hoursGap, 'hour');//.toDate()
+  const startDate = dayGenerated;
+  const endDate = dayGenerated.add(hoursGap, 'hour');
 
   return {startDate, endDate};
-};
-
-const generateImages = () => {
-  const maxImagesCount = 10;
-  const imagesCount = getRandomInteger(1, maxImagesCount);
-
-  return Array.from({length: imagesCount}, () => `http://picsum.photos/248/152?r=${getRandomInteger(1, 100)}`);
 };
 
 
