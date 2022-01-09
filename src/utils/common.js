@@ -7,17 +7,21 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
+export const generateImages = () => {
+  const maxImagesCount = 10;
+  const imagesCount = getRandomInteger(1, maxImagesCount);
 
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.splice(index, 1, update)
-  ];
+  return Array.from({length: imagesCount}, () => `http://picsum.photos/248/152?r=${getRandomInteger(1, 100)}`);
 };
+
+export const getTownImages = (town) => {
+  //В будущем тут будем по городу получать картинки
+  if (!town) {return [];}
+
+  return [...generateImages()];
+
+};
+
 
 export const sortByPrice =(pointA, pointB) => (
   pointB.price - pointA.price
@@ -25,3 +29,15 @@ export const sortByPrice =(pointA, pointB) => (
 
 
 export const sortByTime = (pointA, pointB) => (getDuration(pointB).asMilliseconds() - getDuration(pointA).asMilliseconds());
+
+export const sortByDate = (pointA, pointB) => {
+  if (pointA.startDate > pointB.startDate) {
+    return 1;
+  }
+
+  if (pointA.startDate < pointB.startDate) {
+    return -1;
+  }
+
+  return 0;
+};

@@ -1,5 +1,6 @@
 import EditablePointView from '../view/editable-point-view';
 import PointView from '../view/point-view';
+import {UserAction, UpdateType} from '../conts';
 
 import {RenderPosition, render, replaceElements, removeElement} from '../render';
 
@@ -96,15 +97,22 @@ export default class PointPresenter {
   }
 
   #handleFavouriteClick = () => {
-    this.#changeData({...this.#point, isFavourite: !this.#point.isFavourite});
+    this.#changeData(UserAction.UPDATE_POINT, UpdateType.PATCH, {...this.#point, isFavourite: !this.#point.isFavourite});
   }
 
   #handleDelete = () => {
-    this.destroy();
+    this.#changeData(UserAction.DELETE_POINT, UpdateType.MINOR, this.#point);
   }
 
-  #handleFormSubmit = (task) => {
-    this.#changeData(task);
+  #handleFormSubmit = (point) => {
+
+    const isMinorChange = point.startDate !== this.#point.startDate
+        || point.endDate !== this.#point.endDate
+        || point.price !== this.#point.price;
+
+    const updateType = isMinorChange ? UpdateType.MINOR : UpdateType.PATCH;
+
+    this.#changeData(UserAction.UPDATE_POINT, updateType, point);
     this.#replaceFormToPoint();
   }
 }

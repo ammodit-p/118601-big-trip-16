@@ -1,42 +1,42 @@
-import FiltersView from './view/filters-view';
 import MenuView from './view/menu-view';
 import {generatePoint} from './mock/points';
-import TripInfoTitleView from './view/trip-info-title-view';
-
+import PointsModel from './model/points-model';
+import FilterModel from './model/filter-model.js';
 import {RenderPosition, render} from './render';
 
-import TripPresenter from './presenter/TripPresenter';
+import TripPresenter from './presenter/trip-presenter';
+import FilterPresenter from './presenter/filter-presenter.js';
+import TripInfoPresenter from './presenter/trip-info-presenter';
 
 
-const MAX_POINTS_COUNT = 22;
+const MAX_POINTS_COUNT = 5;
 
-const tripPoints = Array.from({length: MAX_POINTS_COUNT}, generatePoint).sort((a, b) => {
-  if (a.startDate > b.startDate) {
-    return 1;
-  }
+const tripPoints = Array.from({length: MAX_POINTS_COUNT}, generatePoint);
 
-  if (a.startDate < b.startDate) {
-    return -1;
-  }
-
-  return 0;
-});
-
+const filterModel = new FilterModel();
+const pointsModel = new PointsModel();
+pointsModel.points = tripPoints;
 
 const tripInfoContainer = document.querySelector('.trip-main');
-render(tripInfoContainer, new TripInfoTitleView(tripPoints), RenderPosition.BEFOREEND);
-
+const tripInfoPresenter = new TripInfoPresenter(tripInfoContainer, pointsModel);
+tripInfoPresenter.init();
 
 const navigationContainerElement = document.querySelector('.trip-controls__navigation');
 render(navigationContainerElement, new MenuView(), RenderPosition.BEFOREEND);
 
 const filtersContainerElement = document.querySelector('.trip-controls__filters');
-render(filtersContainerElement, new FiltersView(), RenderPosition.BEFOREEND);
 
 
 const tripContainer = document.querySelector('.page-body__page-main .page-body__container');
 
-const tripPresenter = new TripPresenter(tripContainer);
+const tripPresenter = new TripPresenter(tripContainer, pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(filtersContainerElement, filterModel);
 
-tripPresenter.init(tripPoints);
+tripPresenter.init();
+filterPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripPresenter.createPoint();
+});
 
