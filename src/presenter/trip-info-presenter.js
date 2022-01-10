@@ -6,20 +6,29 @@ export default class TripInfoPresenter {
     #tripInfoContainer = null;
     #tripInfoComponent = null;
     #pointsModel = null;
+    #points = []
 
     constructor(tripInfoContainer, pointsModel) {
       this.#pointsModel = pointsModel;
       this.#tripInfoContainer = tripInfoContainer;
-
+      this.#points = this.#pointsModel.points.sort(sortByDate);
       this.#pointsModel.addObserver(this.#handleModelEvent);
     }
 
     init = () => {
       const prevTripInfoComponent = this.#tripInfoComponent;
-      this.#tripInfoComponent = new TripInfoView(this.#pointsModel.points.sort(sortByDate));
+
+      if (!this.#points.length && prevTripInfoComponent === null) {return;}
+
+      if (!this.#points.length && prevTripInfoComponent !== null) {
+        removeElement(prevTripInfoComponent);
+        return;
+      }
+
+      this.#tripInfoComponent = new TripInfoView(this.#points);
 
       if (prevTripInfoComponent === null) {
-        render(this.#tripInfoContainer, this.#tripInfoComponent, RenderPosition.BEFOREEND);
+        render(this.#tripInfoContainer, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
         return;
       }
 

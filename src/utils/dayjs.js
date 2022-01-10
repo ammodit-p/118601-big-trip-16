@@ -10,9 +10,8 @@ export const getDuration = (point) => dayjs.duration(point.endDate.diff(point.st
 
 const MILLISECONDS_IN_HOUR = 3600000;
 
-export const getDiffTime = (point) => {
+export const getDiffTime = (diff) => {
 
-  const diff = getDuration(point);
   const diffInHours = diff.asMilliseconds()/MILLISECONDS_IN_HOUR;
 
   const hours = diff.format('HH');

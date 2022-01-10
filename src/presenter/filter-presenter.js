@@ -1,7 +1,7 @@
 
 import FiltersView from '../view/filters-view';
 import {render, RenderPosition, replaceElements, removeElement} from '../render';
-import { UpdateType} from '../conts';
+import {UpdateType} from '../conts';
 
 export default class FilterPresenter {
     #filterContainer = null;
@@ -41,6 +41,16 @@ export default class FilterPresenter {
       }
 
       this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+    }
+
+    #clearFilter = () => {
+      this.#filterModel.resetDefaultFilter();
+      removeElement(this.#filterComponent);
+    }
+
+    destroy = () => {
+      this.#clearFilter();
+      this.#filterComponent = null;
     }
 
 }

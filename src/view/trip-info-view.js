@@ -52,7 +52,7 @@ const createTripInfoTitleView = (points) => {
   );
 };
 
-const createEmptyTripInfoTitleView = () => ('<section class="trip-main__trip-info  trip-info"></section>');
+const createEmptyTripInfoTitleView = () => ('');
 export default class TripInfoView extends AbstractView {
   #points = null
 
