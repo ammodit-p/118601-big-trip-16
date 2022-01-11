@@ -12,4 +12,8 @@ export default class FilterModel extends AbstractObservable {
     this.#filter = filter;
     this._notify(updateType, filter);
   }
+
+  resetDefaultFilter = () => {
+    this.#filter = FilterType.ALL;
+  }
 }

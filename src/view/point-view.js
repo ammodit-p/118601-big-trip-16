@@ -1,7 +1,7 @@
 import {PointTypeEnum, PointTitleMap} from '../conts';
 import {getSelectedOffers} from '../utils/points';
 import AbstractView from './abstract-view';
-import {getDiffTime} from '../utils/dayjs';
+import {getDiffTime, getDuration} from '../utils/dayjs';
 
 const imgTypeMap = {
   [PointTypeEnum.CHECK_IN]: 'img/icons/check-in.png',
@@ -18,6 +18,7 @@ const imgTypeMap = {
 const createPointTemplate = (point) => {
   const { type, town, startDate, endDate, offers, isFavourite, price} = point;
   const selectedOffers = getSelectedOffers(offers, type);
+  const diff = getDuration(point);
 
   return (
     `<li class="trip-events__item">
@@ -33,7 +34,7 @@ const createPointTemplate = (point) => {
           &mdash;
           <time class="event__end-time" datetime="${endDate.format('YYYY-MM-DDTHH:MM')}">${endDate.format('HH:mm')}</time>
         </p>
-        <p class="event__duration">${getDiffTime(point)}</p>
+        <p class="event__duration">${getDiffTime(diff)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${price}</span>

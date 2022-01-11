@@ -129,7 +129,7 @@ export default class TripPresenter {
 
   #renderNoPoints = () => {
     this.#emptyListComponent = new EmptyListView(this.#filterType);
-    render(this.#tripComponent, this.#emptyListComponent, RenderPosition.AFTERBEGIN);
+    render(this.#pointListComponent, this.#emptyListComponent, RenderPosition.AFTERBEGIN);
   }
 
   #clearPointsList = () => {
@@ -139,7 +139,6 @@ export default class TripPresenter {
 
   #clearTrip = ({resetSortType = false} = {}) => {
     this.#clearPointsList();
-
     removeElement(this.#sortComponent);
     removeElement(this.#emptyListComponent);
 
@@ -162,5 +161,11 @@ export default class TripPresenter {
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
     this.#pointNewPresenter.init();
+  }
+
+  destroy = () => {
+    this.#clearTrip({resetSortType: true});
+
+    removeElement(this.#pointListComponent);
   }
 }
