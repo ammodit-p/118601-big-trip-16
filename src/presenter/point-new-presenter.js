@@ -2,7 +2,6 @@ import EditablePointView from '../view/editable-point-view';
 import dayjs from 'dayjs';
 import  { pointTypes } from '../conts';
 
-import {nanoid} from 'nanoid';
 import {removeElement, render, RenderPosition} from '../render';
 import {UserAction, UpdateType} from '../conts';
 
@@ -13,23 +12,23 @@ export default class PointNewPresenter {
   #emptyPoint = {
     id: '',
     type: pointTypes[0],
-    town: '',
-    info: '',
-    img: [],
     startDate: dayjs(Date.now()),
     endDate: dayjs(Date.now()),
-    price: ''}
+    price: '',
+    isFavourite: false,
+    offers: []
+  }
 
   constructor(pointListContainer, changeData) {
     this.#pointListContainer = pointListContainer;
     this.#changeData = changeData;
   }
 
-  init = () => {
+  init = (allOffers, towns) => {
     if (this.#pointEditComponent !== null) {
       return;
     }
-    this.#pointEditComponent = new EditablePointView(this.#emptyPoint);
+    this.#pointEditComponent = new EditablePointView(this.#emptyPoint, allOffers, towns);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setPointCancelHandler(this.#handleDeleteClick);
 
@@ -37,6 +36,25 @@ export default class PointNewPresenter {
     render(this.#pointListContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+  setSaving = () => {
+    this.#pointEditComponent.updateDataWithElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateDataWithElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
   }
 
   destroy = () => {
@@ -55,9 +73,9 @@ export default class PointNewPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {...point, id: nanoid()},
+      point,
     );
-    this.destroy();
+    // this.destroy();
   }
 
   #handleDeleteClick = () => {

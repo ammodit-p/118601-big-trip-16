@@ -5,7 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {sortByPrice} from '../utils/common';
 import {getDiffTime, getDuration} from '../utils/dayjs';
 import dayjs from 'dayjs';
-// Chart.register(ChartDataLabels);
+import {UpdateType} from '../conts';
 
 import duration from 'dayjs/plugin/duration';
 
@@ -16,11 +16,15 @@ const BAR_HEIGHT = 75;
 export default class StatisticPresenter {
     #statisticComponent = null;
     #containerComponent = null;
-    #points = null;
+    #pointsModel = null;
+    #points = [];
 
     constructor(container, pointsModel) {
       this.#containerComponent = container;
+      this.#pointsModel = pointsModel;
       this.#points = pointsModel.points;
+
+      this.#pointsModel.addObserver(this.#handleModelEvent);
     }
 
     init = () => {
@@ -30,6 +34,13 @@ export default class StatisticPresenter {
       this.#generateMoneyChart();
       this.#generateTypeChart();
       this.#generateTimeChart();
+    }
+
+    #handleModelEvent = (updateType) => {
+      switch(updateType) {
+        case UpdateType.INIT:
+          this.#points = this.#pointsModel.points;
+      }
     }
 
     #chartFactory = ({
