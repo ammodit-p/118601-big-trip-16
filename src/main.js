@@ -17,17 +17,18 @@ const END_POINT = 'https://16.ecmascript.pages.academy/big-trip/';
 const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 
-const tripInfoContainer = document.querySelector('.trip-main');
-
+const tripMainElement = document.querySelector('.trip-main');
 
 const navigationContainerElement = document.querySelector('.trip-controls__navigation');
-const menuItemVew =  new MenuView(MenuItem.TABLE);
 const filtersContainerElement = document.querySelector('.trip-controls__filters');
-const tripContainer = document.querySelector('.page-body__page-main .page-body__container');
+const tripContainerElement = document.querySelector('.page-body__page-main .page-body__container');
+const addEventButtonElement = document.querySelector('.trip-main__event-add-btn');
 
-const tripPresenter = new TripPresenter(tripContainer, pointsModel, filterModel);
+const menuItemVew =  new MenuView(MenuItem.TABLE);
+
+const tripPresenter = new TripPresenter(tripContainerElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersContainerElement, filterModel);
-const statisticPresenter = new StatisticPresenter(tripContainer, pointsModel);
+const statisticPresenter = new StatisticPresenter(tripContainerElement, pointsModel);
 
 tripPresenter.init();
 filterPresenter.init();
@@ -38,26 +39,31 @@ const handleSiteMenuClick = (menuItem) => {
       tripPresenter.init();
       filterPresenter.init();
       statisticPresenter.destroy();
+      addEventButtonElement.disabled = false;
       break;
 
     case MenuItem.STATS:
       tripPresenter.destroy();
       filterPresenter.destroy();
       statisticPresenter.init();
+      addEventButtonElement.disabled = true;
       break;
   }
 };
 
-menuItemVew.setMenuClickHandler(handleSiteMenuClick);
+menuItemVew.sethandleMenuClick(handleSiteMenuClick);
 
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+
+addEventButtonElement.addEventListener('click', (evt) => {
   evt.preventDefault();
+  addEventButtonElement.disabled = true;
   tripPresenter.createPoint();
 });
 
 
 pointsModel.init().finally(() => {
-  const tripInfoPresenter = new TripInfoPresenter(tripInfoContainer, pointsModel);
+  const tripInfoPresenter = new TripInfoPresenter(tripMainElement, pointsModel);
   tripInfoPresenter.init();
-  render(navigationContainerElement, menuItemVew, RenderPosition.BEFOREEND);});
+  render(navigationContainerElement, menuItemVew, RenderPosition.BEFOREEND);
+});
 

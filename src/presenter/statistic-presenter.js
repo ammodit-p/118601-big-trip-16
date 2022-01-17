@@ -36,6 +36,10 @@ export default class StatisticPresenter {
       this.#generateTimeChart();
     }
 
+    destroy = () => {
+      this.#clearStatistic();
+    }
+
     #handleModelEvent = (updateType) => {
       switch(updateType) {
         case UpdateType.INIT:
@@ -187,9 +191,5 @@ export default class StatisticPresenter {
     #clearStatistic = () => {
       removeElement(this.#statisticComponent);
       this.#statisticComponent = null;
-    }
-
-    destroy = () => {
-      this.#clearStatistic();
     }
 }
