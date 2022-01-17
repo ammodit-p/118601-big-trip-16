@@ -1,13 +1,11 @@
 import AbstractView from './abstract-view';
-import {getSelectedOffers} from '../utils/points';
 
 
 const createTripInfoTitleView = (points) => {
-
   const startDate = points[0].startDate;
   const endDate = points[points.length - 1].endDate;
-  const firstCity = points[0].town;
-  const lastCity = points[points.length - 1].town;
+  const firstCity = points[0].destination.town;
+  const lastCity = points[points.length - 1].destination.town;
 
   const generateCities = () => {
 
@@ -24,7 +22,7 @@ const createTripInfoTitleView = (points) => {
       }
 
       case 3: {
-        return (`${firstCity} &mdash; ${points[1].town} &mdash; ${lastCity}`);
+        return (`${firstCity} &mdash; ${points[1].destination.town} &mdash; ${lastCity}`);
       }
 
       default: {
@@ -33,10 +31,7 @@ const createTripInfoTitleView = (points) => {
     }
   };
 
-  const selectedOffers = [...points.map(({offers, type}) => [...getSelectedOffers(offers, type)])].flat();
-
-
-  const totalPrice = () => points.reduce((sum, point) => (sum + Number(point.price) + selectedOffers.reduce((s, offer) => (s + Number(offer.price)), 0)), 0);
+  const totalPrice = () => points.reduce((sum, point) => (sum + Number(point.price) + point.offers.reduce((s, offer) => (s + Number(offer.price)), 0)), 0);
 
   return (
     `<section class="trip-main__trip-info  trip-info">

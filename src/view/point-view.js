@@ -1,5 +1,4 @@
 import {PointTypeEnum, PointTitleMap} from '../conts';
-import {getSelectedOffers} from '../utils/points';
 import AbstractView from './abstract-view';
 import {getDiffTime, getDuration} from '../utils/dayjs';
 
@@ -16,8 +15,7 @@ const imgTypeMap = {
 };
 
 const createPointTemplate = (point) => {
-  const { type, town, startDate, endDate, offers, isFavourite, price} = point;
-  const selectedOffers = getSelectedOffers(offers, type);
+  const { type, destination: {town}, startDate, endDate, offers, isFavourite, price} = point;
   const diff = getDuration(point);
 
   return (
@@ -41,7 +39,7 @@ const createPointTemplate = (point) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-          ${selectedOffers.map((offer) => (`
+          ${offers.map((offer) => (`
           <li class="event__offer">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
