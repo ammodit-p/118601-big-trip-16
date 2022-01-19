@@ -22,12 +22,12 @@ export default class MenuView extends SmartView {
   }
 
   restoreHandlers = () => {
-    this.element.addEventListener('click', this.#menuClickHandler);
+    this.element.addEventListener('click', this.#handleMenuClick);
   }
 
-  setMenuClickHandler = (callback) => {
+  sethandleMenuClick = (callback) => {
     this._callback.menuClick = callback;
-    this.element.addEventListener('click', this.#menuClickHandler);
+    this.element.addEventListener('click', this.#handleMenuClick);
   }
 
   setMenuItem = (menuItem) => {
@@ -35,7 +35,7 @@ export default class MenuView extends SmartView {
     this.updateElement();
   }
 
-  #menuClickHandler = (evt) => {
+  #handleMenuClick = (evt) => {
     evt.preventDefault();
     if (evt.target.tagName !== 'A') {
       return;

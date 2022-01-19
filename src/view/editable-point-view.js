@@ -63,8 +63,8 @@ const createEditablePointTemplate = ({
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${town}" list="destination-list-${id}" ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-${id}">
-            ${towns.map((t) => (`
-              <option value="${t}"></option>
+            ${towns.map((item) => (`
+              <option value="${item.town}"></option>
             `)).join('')}
           </datalist>
         </div>
@@ -149,6 +149,50 @@ export default class EditablePointView extends SmartView {
       return createEditablePointTemplate(this._data);
     }
 
+    setFormCloseHandler = (callback) => {
+      this._callback.formClose = callback;
+      this.element.querySelector('.event__rollup-btn').addEventListener('click',
+        this.#handleFormClose
+      );
+    }
+
+    setFormSubmitHandler = (callback) => {
+      this._callback.formSubmit = callback;
+      this.element.querySelector('form').addEventListener('submit', this.#handleFormSubmit);
+    }
+
+    setPointDeleteHandler = (callback) => {
+      this._callback.deleteClick = callback;
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleDeleteReset);
+    }
+
+    setPointCancelHandler = (callback) => {
+      this._callback.cancelClick = callback;
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleDeleteReset);
+
+    }
+
+    removeElement =() =>{
+      super.removeElement();
+
+      if (this.#datepicker) {
+        this.#datepicker.forEach((item) => item.destroy());
+        this.#datepicker = [];
+      }
+    }
+
+    restoreHandlers = () => {
+      this.#setInnerHandlers();
+      this.#setDatepicker();
+      this.setFormSubmitHandler(this._callback.formSubmit);
+    }
+
+    reset = (point) => {
+      this.updateDataWithElement(
+        this.#parsePointToData(point)
+      );
+    }
+
     #parsePointToData = (point) => {
       if (!point) {return {};}
 
@@ -160,7 +204,6 @@ export default class EditablePointView extends SmartView {
       const towns = this.#towns;
       const isDisabled = point.isDisabled ? point.isDisabled : false;
       const isSaveButtonDisabled = this.#checkIsSaveButtonDisabled({...point, isDisabled});
-
       return {
         ...point,
         availableOffers,
@@ -191,16 +234,16 @@ export default class EditablePointView extends SmartView {
 
     #setInnerHandlers = () => {
       this.element.querySelector('.event__type-group')
-        .addEventListener('click', this.#pointTypeChangeHandler);
+        .addEventListener('click', this.#handlePointTypeChange);
 
       this.element.querySelector('.event__input--destination')
-        .addEventListener('change', this.#townChangeHandler);
+        .addEventListener('change', this.#handleTownChange);
 
       this.element.querySelector('.event__input--price')
-        .addEventListener('change', this.#priceChangeHandler);
+        .addEventListener('change', this.#handlePriceChange);
 
       this.element.querySelector('.event__details')
-        .addEventListener('click', this.#offerChangeHandler);
+        .addEventListener('click', this.#handleOfferChange);
     }
 
     #setDatepicker = () => {
@@ -210,7 +253,7 @@ export default class EditablePointView extends SmartView {
           enableTime: true,
           dateFormat: 'd/m/Y H:i',
           defaultDate: this._data.startDate.toDate() || Date.now(),
-          onChange: this.#startDateChangeHandler,
+          onChange: this.#handleStartDateChange,
         },
       );
 
@@ -220,7 +263,7 @@ export default class EditablePointView extends SmartView {
           enableTime: true,
           dateFormat: 'd/m/Y H:i',
           defaultDate:  this._data.endDate.toDate() ||Date.now(),
-          onChange: this.#endDateChangeHandler,
+          onChange: this.#handleEndDateChange,
         },
 
       );
@@ -231,19 +274,19 @@ export default class EditablePointView extends SmartView {
 
     }
 
-    #startDateChangeHandler = ([date], _, instance) => {
+    #handleStartDateChange = ([date], _, instance) => {
       const startDate = dayjs(date);
       this.updateData({startDate});
       instance.close();
     }
 
-    #endDateChangeHandler = ([date], _, instance) => {
+    #handleEndDateChange = ([date], _, instance) => {
       const endDate = dayjs(date);
       this.updateData({endDate});
       instance.close();
     }
 
-    #pointTypeChangeHandler = (evt) => {
+    #handlePointTypeChange = (evt) => {
       if (evt.target.tagName !== 'LABEL') {return;}
 
       const type = evt.target.dataset.pointType;
@@ -253,37 +296,38 @@ export default class EditablePointView extends SmartView {
       this.updateDataWithElement({type, availableOffers: this.#getAvailableOffers(type),  offers: []});
     }
 
-    #townChangeHandler = (evt) => {
+    #handleTownChange = (evt) => {
       if (evt.target.tagName !== 'INPUT') {return;}
       evt.preventDefault();
       const town = evt.target.value;
 
-      if (town === this._data.town) {return;}
-      const isSaveButtonDisabled = this.#checkIsSaveButtonDisabled({...this._data, destination: town});
+      if (town === this._data.destination.town) {return;}
+      const isSaveButtonDisabled = this.#checkIsSaveButtonDisabled({...this._data, destination: {town}});
       const destination = this.#towns.find((item) => item.town === town);
       this.updateDataWithElement({town, destination, isSaveButtonDisabled});
 
     }
 
-    #priceChangeHandler = (evt) => {
+    #handlePriceChange = (evt) => {
       const price = evt.target.value;
       const isSaveButtonDisabled = this.#checkIsSaveButtonDisabled({...this._data, price});
       this.updateDataWithElement({price, isSaveButtonDisabled});
     }
 
-    #offerChangeHandler = (evt) => {
+    #handleOfferChange = (evt) => {
       if( evt.target.tagName === 'SPAN' || evt.target.tagName === 'LABEL') {
 
         if (this._data.isDisabled) {return;}
 
         const offerId = Number(evt.target.dataset.offerId);
-        const offer = this._data.availableOffers.find((item) => item.id === offerId);
-        const isOfferSelected = this._data.offers.includes(offer);
+        const isOfferSelected = this._data.offers.some((offer) => offer.id === offerId);
+
 
         if (isOfferSelected) {
           this._data.offers = [...this._data.offers.filter((item) =>  item.id !== offerId)];
         }
         if (!isOfferSelected) {
+          const offer = this._data.availableOffers.find((item) => item.id === offerId);
           this._data.offers.push(offer);
         }
 
@@ -292,17 +336,17 @@ export default class EditablePointView extends SmartView {
 
     }
 
-    #formCloseHandler = (evt) => {
+    #handleFormClose = (evt) => {
       evt.preventDefault();
       this._callback.formClose();
     }
 
-    #formSubmitHandler = (evt) => {
+    #handleFormSubmit = (evt) => {
       evt.preventDefault();
       this._callback.formSubmit(this.#parseDataToPoint(this._data));
     }
 
-    #deleteResethandler = (evt) => {
+    #handleDeleteReset = (evt) => {
       evt.preventDefault();
 
       if (this._data && this._data.id) {
@@ -311,49 +355,5 @@ export default class EditablePointView extends SmartView {
       }
 
       this._callback.cancelClick();
-    }
-
-    setFormCloseHandler = (callback) => {
-      this._callback.formClose = callback;
-      this.element.querySelector('.event__rollup-btn').addEventListener('click',
-        this.#formCloseHandler
-      );
-    }
-
-    setFormSubmitHandler = (callback) => {
-      this._callback.formSubmit = callback;
-      this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    }
-
-    setPointDeleteHandler = (callback) => {
-      this._callback.deleteClick = callback;
-      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteResethandler);
-    }
-
-    setPointCancelHandler = (callback) => {
-      this._callback.cancelClick = callback;
-      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteResethandler);
-
-    }
-
-    removeElement =() =>{
-      super.removeElement();
-
-      if (this.#datepicker) {
-        this.#datepicker.forEach((item) => item.destroy());
-        this.#datepicker = [];
-      }
-    }
-
-    restoreHandlers = () => {
-      this.#setInnerHandlers();
-      this.#setDatepicker();
-      this.setFormSubmitHandler(this._callback.formSubmit);
-    }
-
-    reset = (point) => {
-      this.updateDataWithElement(
-        this.#parsePointToData(point)
-      );
     }
 }
