@@ -27,7 +27,7 @@ const addEventButtonElement = document.querySelector('.trip-main__event-add-btn'
 const menuItemVew =  new MenuView(MenuItem.TABLE);
 
 const tripPresenter = new TripPresenter(tripContainerElement, pointsModel, filterModel);
-const filterPresenter = new FilterPresenter(filtersContainerElement, filterModel);
+const filterPresenter = new FilterPresenter(filtersContainerElement, filterModel, pointsModel);
 const statisticPresenter = new StatisticPresenter(tripContainerElement, pointsModel);
 
 tripPresenter.init();
