@@ -11,12 +11,12 @@ export default class TripInfoPresenter {
     constructor(tripInfoContainer, pointsModel) {
       this.#pointsModel = pointsModel;
       this.#tripInfoContainer = tripInfoContainer;
-      this.#points = this.#pointsModel.points.sort(sortByDate);
       this.#pointsModel.addObserver(this.#handleModelEvent);
     }
 
     init = () => {
       const prevTripInfoComponent = this.#tripInfoComponent;
+      this.#points = this.#pointsModel.points.sort(sortByDate);
 
       if (!this.#points.length && prevTripInfoComponent === null) {return;}
 
