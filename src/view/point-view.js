@@ -1,4 +1,4 @@
-import {PointTypeEnum, PointTitleMap} from '../conts';
+import {PointTypeEnum, PointTitleMap} from '../const';
 import AbstractView from './abstract-view';
 import {getDiffTime, getDuration} from '../utils/dayjs';
 

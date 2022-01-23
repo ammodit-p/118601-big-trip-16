@@ -1,9 +1,9 @@
 import EditablePointView from '../view/editable-point-view';
 import dayjs from 'dayjs';
-import  { pointTypes } from '../conts';
+import  { pointTypes } from '../const';
 
 import {removeElement, render, RenderPosition} from '../render';
-import {UserAction, UpdateType} from '../conts';
+import {UserAction, UpdateType} from '../const';
 
 export default class PointNewPresenter {
   #pointListContainer = null;

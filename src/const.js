@@ -24,7 +24,7 @@ export const PointTitleMap = {
   [PointTypeEnum.FLIGHT]: 'Flight',
   [PointTypeEnum.DRIVE]: 'Drive',
   [PointTypeEnum.CHECK_IN]: 'Check-in',
-  [PointTypeEnum.BUS]: 'Bus'
+  [PointTypeEnum.BUS]: 'Bus',
 };
 
 export const SortType = {

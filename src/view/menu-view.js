@@ -1,5 +1,5 @@
 import SmartView from './smart-view';
-import {MenuItem} from '../conts';
+import {MenuItem} from '../const';
 
 const createMenuTemplate = (menuItem) =>
   (

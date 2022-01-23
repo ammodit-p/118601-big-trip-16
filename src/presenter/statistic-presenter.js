@@ -5,7 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {sortByPrice} from '../utils/common';
 import {getDiffTime, getDuration} from '../utils/dayjs';
 import dayjs from 'dayjs';
-import {UpdateType} from '../conts';
+import {UpdateType} from '../const';
 
 import duration from 'dayjs/plugin/duration';
 

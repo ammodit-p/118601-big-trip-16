@@ -2,7 +2,7 @@ import MenuView from './view/menu-view';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model.js';
 import {RenderPosition, render} from './render';
-import {MenuItem} from './conts';
+import {MenuItem} from './const';
 import StatisticPresenter from './presenter/statistic-presenter';
 
 import TripPresenter from './presenter/trip-presenter';

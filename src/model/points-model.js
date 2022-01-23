@@ -1,5 +1,5 @@
 import AbstractObservable from '../utils/abstract-observable';
-import {UpdateType} from '../conts';
+import {UpdateType} from '../const';
 import Adapter from '../adapter';
 
 export default class PointsModel extends AbstractObservable {

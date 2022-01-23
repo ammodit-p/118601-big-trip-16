@@ -9,7 +9,7 @@ import {filters} from '../utils/filters';
 
 import { sortByPrice, sortByTime, sortByDate} from '../utils/common';
 import {RenderPosition, render, removeElement} from '../render';
-import { FilterType, SortType, UpdateType, UserAction } from '../conts';
+import { FilterType, SortType, UpdateType, UserAction } from '../const';
 
 export default class TripPresenter {
   #tripContainer = null;

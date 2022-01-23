@@ -1,6 +1,6 @@
 import EditablePointView from '../view/editable-point-view';
 import PointView from '../view/point-view';
-import {UserAction, UpdateType} from '../conts';
+import {UserAction, UpdateType} from '../const';
 
 import {RenderPosition, render, replaceElements, removeElement} from '../render';
 

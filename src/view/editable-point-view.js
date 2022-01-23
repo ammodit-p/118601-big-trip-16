@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import  { PointTitleMap, pointTypes} from '../conts';
+import  { PointTitleMap, pointTypes} from '../const';
 import SmartView from './smart-view';
 import flatpickr from 'flatpickr';
 
