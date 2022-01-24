@@ -24,7 +24,6 @@ export default class PointsModel extends AbstractObservable {
     }
 
     get towns() {
-      // console.log('towns', this.#towns)
       return this.#towns;
     }
 

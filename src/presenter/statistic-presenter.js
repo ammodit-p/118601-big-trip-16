@@ -2,7 +2,6 @@ import { removeElement, render, RenderPosition } from '../render';
 import StatisticView from '../view/statistic-view';
 import {Chart} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {sortByPrice} from '../utils/common';
 import {getDiffTime, getDuration} from '../utils/dayjs';
 import dayjs from 'dayjs';
 import {UpdateType} from '../const';
@@ -119,13 +118,33 @@ export default class StatisticPresenter {
       },
     })
 
-    #generateMoneyChart = () => {
-      const ctx = document.querySelector('#money');
-      ctx.height = BAR_HEIGHT * this.#points.length;
+    #getDataLabelsCtx = (pointCounter, querySelector) => {
+      const counted = this.#points.reduce((allPoints, point) => {
+        if (point.type in allPoints) {
+          allPoints[point.type] += pointCounter(point);
+        } else {
+          allPoints[point.type] = pointCounter(point);
+        }
+        return allPoints;
+      }, {});
 
-      const sortedPoints = this.#points.sort(sortByPrice);
-      const labels = [...sortedPoints.map((item) => item.type.toUpperCase())];
-      const data = [ ...sortedPoints.map((item) => item.price)];
+      const sorted = Object.entries(counted).sort((a, b) => b[1] - a[1]);
+
+      const labels = [...sorted.map((item) => item[0].toUpperCase())];
+      const data = [...sorted.map((item) => item[1])];
+
+      const ctx = document.querySelector(querySelector);
+      ctx.height = BAR_HEIGHT * labels.length;
+
+      return {labels, data, ctx};
+    }
+
+    #generateMoneyChart = () => {
+
+      const getPointPrice = (point) => point.price;
+
+      const {data, labels, ctx} = this.#getDataLabelsCtx(getPointPrice, '#money');
+
       const formatter = (val) => `€ ${val}`;
       const text = 'MONEY';
 
@@ -133,55 +152,25 @@ export default class StatisticPresenter {
     }
 
     #generateTypeChart = () => {
-      const ctx = document.querySelector('#type');
 
-      const countedTypes = this.#points.reduce((allTypes, {type}) => {
-        if (type in allTypes) {
-          allTypes[type]++;
-        } else {
-          allTypes[type] = 1;
-        }
+      const {data, labels, ctx} = this.#getDataLabelsCtx(() => 1, '#type');
 
-        return allTypes;
-      }, {});
-
-      const sorted = Object.entries(countedTypes).sort((a, b) => b[1] - a[1]);
-
-      ctx.height = BAR_HEIGHT * sorted.length;
-
-      const labels = [...sorted.map((item) => item[0].toUpperCase())];
-      const data = [...sorted.map((item) => item[1])];
       const formatter = (val) => `${val}x`;
       const text = 'TYPE';
-
 
       return this.#chartFactory({ctx, labels, data, formatter, text});
     }
 
     #generateTimeChart = () => {
-      const ctx = document.querySelector('#time');
 
+      const getDurationInMilliseconds = (point) =>  getDuration(point).asMilliseconds();
 
-      const countedTime = this.#points.reduce((allPoints, point) => {
-        if(point.type in allPoints) {
-          allPoints[point.type] += getDuration(point).asMilliseconds();
-        } else {allPoints[point.type] = getDuration(point).asMilliseconds();}
-
-        return allPoints;
-      }, {});
-
-      const sorted = Object.entries(countedTime).sort((a, b) => b[1] - a[1]);
-
-      ctx.height = BAR_HEIGHT * sorted.length;
-
-      const labels = [...sorted.map((item) => item[0].toUpperCase())];
-      const data = [...sorted.map((item) => item[1])];
+      const {data, labels, ctx} = this.#getDataLabelsCtx(getDurationInMilliseconds, '#time');
 
       const formatter = (val) => {
         const day = dayjs.duration(val);
         return getDiffTime(day);
       };
-
       const text = 'TIME';
 
       return this.#chartFactory({ctx, labels, data, formatter, text});
