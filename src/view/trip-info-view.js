@@ -59,9 +59,8 @@ export default class TripInfoView extends AbstractView {
   get template() {
     if (!this.#points.length) {
       return createEmptyTripInfoTitleView();
-    } else {
-      return createTripInfoTitleView(this.#points);
     }
+    return createTripInfoTitleView(this.#points);
   }
 }
 

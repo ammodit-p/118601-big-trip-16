@@ -1,8 +1,5 @@
 export const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-export const TOWNS = ['Amsterdam', 'Geneva', 'Moscow'];
-
-
 export const PointTypeEnum = {
   CHECK_IN: 'check-in',
   SIGHTSEEING: 'sightseeing',

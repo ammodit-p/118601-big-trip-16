@@ -14,7 +14,7 @@ const createEditablePointTemplate = ({
   destination: {
     town = '',
     info = '',
-    img = [],
+    imgs = [],
   },
   isSaveButtonDisabled,
   isDisabled,
@@ -117,7 +117,7 @@ const createEditablePointTemplate = ({
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-            ${img.map((i) => `
+            ${imgs.map((i) => `
               <img class="event__photo" src="${i.src}" alt="${i.description}">
             `).join('')}
 
@@ -130,7 +130,7 @@ const createEditablePointTemplate = ({
   );};
 
 export default class EditablePointView extends SmartView {
-    #datepicker = []
+    #datepickers = []
     #allOffers = []
     #towns = []
 
@@ -175,9 +175,9 @@ export default class EditablePointView extends SmartView {
     removeElement =() =>{
       super.removeElement();
 
-      if (this.#datepicker) {
-        this.#datepicker.forEach((item) => item.destroy());
-        this.#datepicker = [];
+      if (this.#datepickers) {
+        this.#datepickers.forEach((item) => item.destroy());
+        this.#datepickers = [];
       }
     }
 
@@ -268,8 +268,8 @@ export default class EditablePointView extends SmartView {
 
       );
 
-      this.#datepicker.push(startDatepicker);
-      this.#datepicker.push(endDatepicker);
+      this.#datepickers.push(startDatepicker);
+      this.#datepickers.push(endDatepicker);
 
 
     }

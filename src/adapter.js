@@ -12,7 +12,7 @@ export default class Adapter {
   #townToClient = (town) => ({
     town: town.name,
     info: town.description,
-    img: town.pictures
+    imgs: town.pictures
   })
 
   #pointToClient = (point) => ({
@@ -21,7 +21,7 @@ export default class Adapter {
     destination: {
       town: point.destination.name,
       info: point.destination.description,
-      img: point.destination.pictures
+      imgs: point.destination.pictures
     },
     startDate: dayjs(point['date_from']),
     endDate: dayjs(point['date_to']),
@@ -39,7 +39,7 @@ export default class Adapter {
     destination: {
       description: point.destination.info,
       name: point.destination.town,
-      pictures: point.destination.img
+      pictures: point.destination.imgs
     },
     ['is_favorite']: point.isFavourite,
     offers: point.offers

@@ -155,5 +155,6 @@ export default class PointPresenter {
 
     const updateType = isMinorChange ? UpdateType.MINOR : UpdateType.PATCH;
     this.#changeData(UserAction.UPDATE_POINT, updateType, point);
+    document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
 }

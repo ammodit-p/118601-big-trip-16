@@ -46,11 +46,11 @@ export default class StatisticPresenter {
       }
     }
 
-    #chartFactory = ({
+    #getChart = ({
       ctx,
       labels,
-      data,
-      formatter,
+      values,
+      getFormattedValue,
       text
     }) => new Chart(ctx, {
       plugins: [ChartDataLabels],
@@ -58,7 +58,7 @@ export default class StatisticPresenter {
       data: {
         labels: [...labels],
         datasets: [{
-          data: [ ...data],
+          data: [ ...values],
           backgroundColor: '#ffffff',
           hoverBackgroundColor: '#ffffff',
           anchor: 'start',
@@ -76,7 +76,7 @@ export default class StatisticPresenter {
             color: '#000000',
             anchor: 'end',
             align: 'start',
-            formatter: formatter,
+            formatter: getFormattedValue,
           },
         },
         title: {
@@ -119,61 +119,62 @@ export default class StatisticPresenter {
     })
 
     #getDataLabelsCtx = (pointCounter, querySelector) => {
-      const counted = this.#points.reduce((allPoints, point) => {
+      const countedPoints = this.#points.reduce((allPoints, point) => {
         if (point.type in allPoints) {
           allPoints[point.type] += pointCounter(point);
-        } else {
-          allPoints[point.type] = pointCounter(point);
+          return allPoints;
         }
+
+        allPoints[point.type] = pointCounter(point);
         return allPoints;
       }, {});
 
-      const sorted = Object.entries(counted).sort((a, b) => b[1] - a[1]);
+      const sortedPoints = Object.entries(countedPoints).sort((a, b) => b[1] - a[1]);
 
-      const labels = [...sorted.map((item) => item[0].toUpperCase())];
-      const data = [...sorted.map((item) => item[1])];
+      const labels = [...sortedPoints.map((item) => item[0].toUpperCase())];
+      const values = [...sortedPoints.map((item) => item[1])];
 
       const ctx = document.querySelector(querySelector);
       ctx.height = BAR_HEIGHT * labels.length;
 
-      return {labels, data, ctx};
+      return {labels, values, ctx};
     }
 
     #generateMoneyChart = () => {
 
       const getPointPrice = (point) => point.price;
 
-      const {data, labels, ctx} = this.#getDataLabelsCtx(getPointPrice, '#money');
+      const {values, labels, ctx} = this.#getDataLabelsCtx(getPointPrice, '#money');
 
-      const formatter = (val) => `€ ${val}`;
+      const getFormattedValue = (val) => `€ ${val}`;
       const text = 'MONEY';
 
-      return this.#chartFactory({ctx, labels, data, formatter, text});
+      return this.#getChart({ctx, labels, values, getFormattedValue, text});
     }
 
     #generateTypeChart = () => {
 
-      const {data, labels, ctx} = this.#getDataLabelsCtx(() => 1, '#type');
+      const {values, labels, ctx} = this.#getDataLabelsCtx(() => 1, '#type');
 
-      const formatter = (val) => `${val}x`;
+      const getFormattedValue = (val) => `${val}x`;
       const text = 'TYPE';
 
-      return this.#chartFactory({ctx, labels, data, formatter, text});
+      return this.#getChart({ctx, labels, values, getFormattedValue, text});
     }
 
     #generateTimeChart = () => {
 
       const getDurationInMilliseconds = (point) =>  getDuration(point).asMilliseconds();
 
-      const {data, labels, ctx} = this.#getDataLabelsCtx(getDurationInMilliseconds, '#time');
+      const {values, labels, ctx} = this.#getDataLabelsCtx(getDurationInMilliseconds, '#time');
 
-      const formatter = (val) => {
+      const getFormattedValue = (val) => {
         const day = dayjs.duration(val);
         return getDiffTime(day);
       };
       const text = 'TIME';
 
-      return this.#chartFactory({ctx, labels, data, formatter, text});
+      return this.#getChart({ctx, labels, values, getFormattedValue, text});
     }
 
 
